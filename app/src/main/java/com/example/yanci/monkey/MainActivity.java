@@ -1,5 +1,6 @@
 package com.example.yanci.monkey;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.RadioGroup;
@@ -10,7 +11,10 @@ import com.example.yanci.monkey.Fragment.FragmentRepo;
 import com.example.yanci.monkey.Fragment.FragmentUsers;
 import com.example.yanci.monkey.activity.KBaseActivity;
 
-public class MainActivity extends KBaseActivity {
+public class MainActivity extends KBaseActivity implements FragmentDisc.OnFragmentInteractionListener,
+                                            FragmentMore.OnFragmentInteractionListener,
+                                            FragmentRepo.OnFragmentInteractionListener,
+                                            FragmentUsers.OnFragmentInteractionListener {
     private RadioGroup radioGroup;
     private FragmentDisc fragmentDisc;      /* Discover 模块 */
     private FragmentRepo fragmentRepo;      /* Repository 模块 */
@@ -56,6 +60,11 @@ public class MainActivity extends KBaseActivity {
             }
         });
 
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }
