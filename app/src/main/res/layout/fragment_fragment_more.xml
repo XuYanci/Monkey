@@ -8,6 +8,26 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:layout_height="45dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更多"
+            android:id="@+id/textView4"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textSize="16dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_login"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="1"
         android:background="@drawable/bg_listitem"
@@ -44,7 +64,8 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/ll_about"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="1"
@@ -59,11 +80,24 @@
             android:id="@+id/textView2"
             android:gravity="center_vertical"
             android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:id="@+id/imageView3"
+            android:background="@drawable/ic_arraw_right"
+            android:layout_weight="0"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/ll_feedback"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="1"
@@ -78,7 +112,19 @@
             android:id="@+id/textView3"
             android:gravity="center_vertical"
             android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:id="@+id/imageView4"
+            android:background="@drawable/ic_arraw_right"
+            android:layout_weight="0"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
+
 
 </LinearLayout>
