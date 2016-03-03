@@ -2,6 +2,7 @@ package com.example.yanci.monkey.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.example.yanci.core.AppActionCallBackListener;
+import com.example.yanci.core.AppConfig;
+import com.example.yanci.model.AccessTokenResp;
+import com.example.yanci.model.PersonalDetailResp;
 import com.example.yanci.monkey.R;
+import com.example.yanci.monkey.activity.KBaseActivity;
 import com.example.yanci.monkey.activity.LoginActivity;
 
 /**
@@ -85,9 +91,17 @@ public class FragmentMore extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "onClick: LOGIN");
-                // TODO: 判断本地是否保存AccessToken,有则进入个人资料界面,否则则进入登陆界面
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                startActivityForResult(intent,REQUEST_CODE);
+                // 判断本地是否保存AccessToken,有则进入个人资料界面,否则则进入登陆界面
+                SharedPreferences preference_accesstoken = getActivity().getSharedPreferences("user_accesstoken",0);
+                String accessToken = preference_accesstoken.getString("ACCESSTOKEN","0");
+                if (accessToken.equals("0")) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivityForResult(intent,REQUEST_CODE);
+                }
+                else {
+                    // 进入个人资料界面
+
+                }
             }
         });
 
@@ -97,7 +111,6 @@ public class FragmentMore extends Fragment {
                 Log.i(TAG,"onClick: ABOUT");
             }
         });
-
         ll_feedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,8 +118,22 @@ public class FragmentMore extends Fragment {
             }
         });
 
-        // 初始化Model
+        // 更新用户信息
+        SharedPreferences preference_accesstoken = getActivity().getSharedPreferences("user_accesstoken",0);
+        String accessToken = preference_accesstoken.getString("ACCESSTOKEN","0");
+        if (!accessToken.equals(0)) {
+            ((KBaseActivity)getActivity()).appAction.getPersonalDetailByAccessToken(accessToken, new AppActionCallBackListener<PersonalDetailResp>() {
+                @Override
+                public void onSuccess(PersonalDetailResp data) {
 
+                }
+
+                @Override
+                public void onFailure(String errorEvent, String message) {
+
+                }
+            });
+        }
 
         return view;
     }
@@ -153,8 +180,29 @@ public class FragmentMore extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        Log.i(TAG, "onActivityResult: " + data.getStringExtra("code"));
+        super.onActivityResult(requestCode, resultCode, data);
+        // 获取用户登录返回的code
+        String code = data.getStringExtra("code");
+        // 获取用户AccessToken
+        String client_id = AppConfig.client_id;
+        String client_secret = AppConfig.client_secret;
+                ((KBaseActivity) getActivity()).appAction.getAccessToken(client_id, client_secret, code, new AppActionCallBackListener<AccessTokenResp>() {
+            @Override
+            public void onSuccess(AccessTokenResp data) {
+                // 保存用户AccessToken
+                SharedPreferences preference_accesstoken = getActivity().getSharedPreferences("user_accesstoken",0);
+                SharedPreferences.Editor editor = preference_accesstoken.edit();
+                editor.putString("ACCESSTOKEN",data.getAccess_token());
+                editor.putString("SCOPE",data.getScope());
+                editor.putString("TOKENTYPE",data.getToken_type());
+                editor.commit();
+            }
+
+            @Override
+            public void onFailure(String errorEvent, String message) {
+                Log.i(TAG, "onFailure: " + errorEvent + message);
+            }
+        });
     }
 
 }

@@ -1,5 +1,8 @@
 package com.example.yanci.api;
 
+import com.example.yanci.model.AccessTokenResp;
+import com.example.yanci.model.PersonalDetailResp;
+
 /**
  * Created by yanci on 16/2/14.
  */
@@ -18,16 +21,26 @@ public interface Api {
     public final static String DISCOVERY_GITHUBRANKING = "github.discovery.githubranking";
     public final static String DISCOVERY_GITHUBAWARDS = "github.discovery.githubawards";
 
+    // 服务器Root URL
+    public final static String SERVER_API_URL = "https://api.github.com";
+    public final static String SERVER_URL = "https://github.com";
+
+    // url suffix
+    public final static String SERVER_ACCESSTOKEN_SUFFIX = "/login/oauth/access_token";
+    public final static String SERVER_USERS_SUFFIX = "/users";
+    public final static String SERVER_USER_SUFFIX = "/user";
+
     // TODO: Github Api List
 
-    /**********  MORE 模块 **********/
+    /**********  MORE 模 块 **********/
+    // 获取用户AccessToken
+    public AccessTokenResp getAccessToken(String client_id,String client_secret,String code);
 
-    // 用户登录
+    // 通过AccessToken获取用户个人信息
+    public PersonalDetailResp getPersonalDetailByAccessToken(String access_token);
 
-    // 用户退出登录
-
-    // 用户个人信息
-
+    // 获取用户个人信息
+    public PersonalDetailResp getPersonalDetail(String username);
     /********** USERS 模块 **********/
 
     // 获取国家列表

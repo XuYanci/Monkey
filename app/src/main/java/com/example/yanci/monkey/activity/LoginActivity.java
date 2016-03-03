@@ -15,14 +15,12 @@ public class LoginActivity extends KBaseActivity {
     private static String authLogin = "https://github.com/login/oauth/authorize";
     private WebView webView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         // TODO: 清理缓存
-
 
         // 加载GitHub界面
         webView = (WebView)findViewById(R.id.webView);
@@ -33,21 +31,18 @@ public class LoginActivity extends KBaseActivity {
                 // Here put your code
                 Log.d(TAG, url);
                 if (url.contains("xuyanci.github.io")) {
-                    // TODO: 解析URL中的code,并返回到上一个界面
+                    // 解析URL中的code,并返回到上一个界面
+                    String code = url.substring(url.indexOf("code=") + 5);
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_GET_CONTENT);
-                    intent.putExtra("code","github code");
+                    intent.putExtra("code",code);
                     setResult(1,intent);
-
                     finish();
                     return true;
                 }
                 return false;
             }
         });
-
-        // TODO: 获取RedirectUrl中的code,并返回到上一个More界面。
-
     }
 
 

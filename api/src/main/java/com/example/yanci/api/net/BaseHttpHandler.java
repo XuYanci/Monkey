@@ -26,10 +26,6 @@ public class BaseHttpHandler {
     private final  static  String REQUEST_METHOD_POST = "POST";
     private final  static  String REQUEST_METHOD_GET  = "GET";
 
-
-    // 服务器Root URL
-    private final static String SERVER_URL = "https://api.github.com";
-
     // 编码类型
     private final static String ENCODE_TYPE = "UTF-8";
 
@@ -62,8 +58,8 @@ public class BaseHttpHandler {
      * @param Request
      * @return
      */
-    private String RequestUrl(String Request)  {
-        return SERVER_URL;
+    private String RequestUrl(String request)  {
+        return request;
     }
 
     /**
@@ -74,9 +70,9 @@ public class BaseHttpHandler {
      * @return
      * @throws IOException
      */
-    public  <T> T HttpGetRequest(String request,Map<String, String> paramsMap, Type typeOfT) throws Exception {
+    public  <T> T HttpGetRequest(String request,Map<String, String> paramsMap, Type typeOfT) throws IOException {
         String params = joinParams(paramsMap);
-        HttpURLConnection connection = getConnection(RequestUrl(request) + params, REQUEST_METHOD_GET, TIME_OUT);
+        HttpURLConnection connection = getConnection(RequestUrl(request) + '?' +  params, REQUEST_METHOD_GET, TIME_OUT);
         connection.connect();
 
         // Request Fail
@@ -117,6 +113,7 @@ public class BaseHttpHandler {
         String data = joinParams(paramsMap);
         HttpURLConnection connection = getConnection(RequestUrl(request), REQUEST_METHOD_POST,TIME_OUT);
         connection.setRequestProperty("Content-Length",String.valueOf(data.getBytes().length));
+        connection.setRequestProperty("Accept","application/json");
         connection.connect();
 
         // Write Params
@@ -144,7 +141,7 @@ public class BaseHttpHandler {
             connection.disconnect();
             final  String result = new String(baos.toByteArray());
             Gson gson = new Gson();
-            return gson.fromJson(request, typeOfT);
+            return gson.fromJson(result, typeOfT);
         }
 
         return null;
