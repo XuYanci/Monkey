@@ -3,6 +3,7 @@ package com.example.yanci.monkey.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,15 +11,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.yanci.core.AppActionCallBackListener;
 import com.example.yanci.core.AppConfig;
+import com.example.yanci.core.AsynImageLoader;
 import com.example.yanci.model.AccessTokenResp;
 import com.example.yanci.model.PersonalDetailResp;
 import com.example.yanci.monkey.R;
 import com.example.yanci.monkey.activity.KBaseActivity;
 import com.example.yanci.monkey.activity.LoginActivity;
+import com.example.yanci.monkey.activity.PersonalDetailActivity;
+
+import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +43,10 @@ public class FragmentMore extends Fragment {
     private static final String TAG = "TAG_FRAGMENTMORE";
     private static final int REQUEST_CODE = 1;
 
-    private LinearLayout ll_login,ll_about,ll_feedback;
+    private LinearLayout ll_login,ll_about,ll_feedback,ll_logout;
+    private ImageView userImageView;
+    private TextView userTextView;
+
     private View view;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -80,61 +90,19 @@ public class FragmentMore extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        view = inflater.inflate(R.layout.fragment_fragment_more, container, false);
-
-        // 初始化UI
-        ll_login =(LinearLayout)view.findViewById(R.id.ll_login);
-        ll_about =  (LinearLayout)view.findViewById(R.id.ll_about);
-        ll_feedback = (LinearLayout)view.findViewById(R.id.ll_feedback);
-
-        ll_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick: LOGIN");
-                // 判断本地是否保存AccessToken,有则进入个人资料界面,否则则进入登陆界面
-                SharedPreferences preference_accesstoken = getActivity().getSharedPreferences("user_accesstoken",0);
-                String accessToken = preference_accesstoken.getString("ACCESSTOKEN","0");
-                if (accessToken.equals("0")) {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    startActivityForResult(intent,REQUEST_CODE);
-                }
-                else {
-                    // 进入个人资料界面
-
-                }
+        if (null != view) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (null != parent) {
+                parent.removeView(view);
             }
-        });
-
-        ll_about.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG,"onClick: ABOUT");
-            }
-        });
-        ll_feedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick: FEEDBACK");
-            }
-        });
-
-        // 更新用户信息
-        SharedPreferences preference_accesstoken = getActivity().getSharedPreferences("user_accesstoken",0);
-        String accessToken = preference_accesstoken.getString("ACCESSTOKEN","0");
-        if (!accessToken.equals(0)) {
-            ((KBaseActivity)getActivity()).appAction.getPersonalDetailByAccessToken(accessToken, new AppActionCallBackListener<PersonalDetailResp>() {
-                @Override
-                public void onSuccess(PersonalDetailResp data) {
-
-                }
-
-                @Override
-                public void onFailure(String errorEvent, String message) {
-
-                }
-            });
+            UpdateUIWhenCreateView();
         }
-
+        else {
+            view = inflater.inflate(R.layout.fragment_fragment_more, container, false);
+            InitUI();
+            AddUIListener();
+            UpdateUIWhenCreateView();
+        }
         return view;
     }
 
@@ -196,6 +164,7 @@ public class FragmentMore extends Fragment {
                 editor.putString("SCOPE",data.getScope());
                 editor.putString("TOKENTYPE",data.getToken_type());
                 editor.commit();
+                UpdateUIWhenCreateView();
             }
 
             @Override
@@ -203,6 +172,100 @@ public class FragmentMore extends Fragment {
                 Log.i(TAG, "onFailure: " + errorEvent + message);
             }
         });
+    }
+
+    private void InitUI() {
+        ll_login = (LinearLayout) view.findViewById(R.id.ll_login);
+        ll_about = (LinearLayout) view.findViewById(R.id.ll_about);
+        ll_feedback = (LinearLayout) view.findViewById(R.id.ll_feedback);
+        ll_logout = (LinearLayout) view.findViewById(R.id.ll_logout);
+        userImageView = (ImageView) view.findViewById(R.id.userImageView);
+        userTextView = (TextView) view.findViewById(R.id.userTextView);
+    }
+
+    private void AddUIListener() {
+        ll_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onClick: LOGIN");
+                // 判断本地是否保存AccessToken,有则进入个人资料界面,否则则进入登陆界面
+                SharedPreferences preference_accesstoken = getActivity().getSharedPreferences("user_accesstoken", 0);
+                String accessToken = preference_accesstoken.getString("ACCESSTOKEN", "0");
+                if (accessToken.equals("0")) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE);
+                } else {
+                    // 进入个人资料界面
+                    Intent intent = new Intent(getActivity(), PersonalDetailActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        ll_about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onClick: ABOUT");
+            }
+        });
+
+        ll_feedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onClick: FEEDBACK");
+            }
+        });
+
+        ll_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences preference = getActivity().getSharedPreferences("user_accesstoken",0);
+                SharedPreferences.Editor editor = preference.edit();
+                editor.clear();
+                editor.commit();
+                ll_logout.setVisibility(View.GONE);
+                UpdateUIWhenCreateView();
+            }
+        });
+
+    }
+
+    private void UpdateUIWhenCreateView() {
+        // 更新用户头像和用户名
+        SharedPreferences preference_accesstoken = getActivity().getSharedPreferences("user_accesstoken", 0);
+        String accessToken = preference_accesstoken.getString("ACCESSTOKEN", "0");
+
+        if (accessToken.equals("0")) {
+            ll_logout.setVisibility(View.GONE);
+            userTextView.setText("登录");
+            userImageView.setImageDrawable(null);
+        }
+
+        if (!accessToken.equals("0")) {
+            ll_logout.setVisibility(View.VISIBLE);
+            ((KBaseActivity) getActivity()).appAction.getPersonalDetailByAccessToken(accessToken, new AppActionCallBackListener<PersonalDetailResp>() {
+                @Override
+                public void onSuccess(PersonalDetailResp data) {
+                    userTextView.setText(data.getName());
+                    new AsynImageLoader().loadImage(data.getAvatar_url(), new AsynImageLoader.ImageLoadInterface() {
+                        @Override
+                        public void loadImageCallback(final Drawable drawable) {
+                            userImageView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    userImageView.setImageDrawable(drawable);
+                                }
+                            });
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(String errorEvent, String message) {
+
+                }
+            });
+        }
     }
 
 }

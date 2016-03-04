@@ -36,6 +36,20 @@ public class ApiImpl implements Api {
         }
     }
 
+
+    public PersonalDetailResp getPersonalDetailByAccessToken(String access_token) {
+        Map<String,String> paramMap = new HashMap<>();
+        paramMap.put("access_token",access_token);
+        Type type = new TypeToken<PersonalDetailResp>(){}.getType();
+        try {
+            return httpHandler.HttpGetRequest(SERVER_API_URL + SERVER_USER_SUFFIX, paramMap, type);
+        }
+        catch (IOException e) {
+            return null;
+        }
+    }
+
+
     public PersonalDetailResp getPersonalDetail(String username) {
         Type type = new TypeToken<PersonalDetailResp>(){}.getType();
         try {
@@ -45,17 +59,4 @@ public class ApiImpl implements Api {
             return null;
         }
     }
-
-    public PersonalDetailResp getPersonalDetailByAccessToken(String access_token) {
-        Map<String,String> paramMap = new HashMap<>();
-        paramMap.put("access_token",access_token);
-        Type type = new TypeToken<PersonalDetailResp>(){}.getType();
-        try {
-            return httpHandler.HttpGetRequest(SERVER_API_URL + SERVER_USER_SUFFIX,paramMap,type);
-        }
-        catch (IOException e) {
-            return null;
-        }
-    }
-
 }
