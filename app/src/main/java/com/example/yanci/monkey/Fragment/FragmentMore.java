@@ -197,6 +197,7 @@ public class FragmentMore extends Fragment {
                 } else {
                     // 进入个人资料界面
                     Intent intent = new Intent(getActivity(), PersonalDetailActivity.class);
+                    intent.putExtra("accesstoken",accessToken);
                     startActivity(intent);
                 }
             }

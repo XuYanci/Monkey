@@ -55,7 +55,9 @@ public class AsynImageLoader {
 	 * sdcard初始路径
 	 */
 	private String path = Environment.getExternalStorageDirectory().getPath()+"/YUImagePath/image/";
-	
+
+
+
 	public void loadImage(final String imageUrl,final ImageLoadInterface callback){
 		
 		Log.d(TAG, "cache size "+imageCache.size());

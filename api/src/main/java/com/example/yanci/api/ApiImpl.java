@@ -36,7 +36,6 @@ public class ApiImpl implements Api {
         }
     }
 
-
     public PersonalDetailResp getPersonalDetailByAccessToken(String access_token) {
         Map<String,String> paramMap = new HashMap<>();
         paramMap.put("access_token",access_token);
@@ -50,7 +49,7 @@ public class ApiImpl implements Api {
     }
 
 
-    public PersonalDetailResp getPersonalDetail(String username) {
+    public PersonalDetailResp getPersonalDetailByUserName(String username) {
         Type type = new TypeToken<PersonalDetailResp>(){}.getType();
         try {
             return  httpHandler.HttpGetRequest(SERVER_API_URL + SERVER_USERS_SUFFIX + "/" + username, null, type);

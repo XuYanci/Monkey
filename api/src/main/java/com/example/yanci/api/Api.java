@@ -40,7 +40,7 @@ public interface Api {
     public PersonalDetailResp getPersonalDetailByAccessToken(String access_token);
 
     // 获取用户个人信息
-    public PersonalDetailResp getPersonalDetail(String username);
+    public PersonalDetailResp getPersonalDetailByUserName(String username);
     /********** USERS 模块 **********/
 
     // 获取国家列表

@@ -27,7 +27,7 @@ public class AppActionImpl implements AppAction{
         new AsyncTask<Void,Void,AccessTokenResp>() {
             @Override
             protected AccessTokenResp doInBackground(Void... params) {
-                return api.getAccessToken(client_id,client_secret,code);
+                return api.getAccessToken(client_id, client_secret, code);
             }
 
             @Override
@@ -57,6 +57,26 @@ public class AppActionImpl implements AppAction{
                 else {
                    listener.onFailure(AppError.STATUS_ERROR_TIMEOUT,AppError.MESSAGE_ERROR_TIMEOUT);
                }
+            }
+        }.execute();
+    }
+
+    @Override
+    public void getPersonalDetailByUserName(final String username, final AppActionCallBackListener<PersonalDetailResp> listener) {
+        new AsyncTask<Void,Void,PersonalDetailResp>() {
+            @Override
+            protected PersonalDetailResp doInBackground(Void... params) {
+                return api.getPersonalDetailByUserName(username);
+            }
+
+            @Override
+            protected void onPostExecute(PersonalDetailResp personalDetailResp) {
+                if (listener!=null && personalDetailResp!=null) {
+                    listener.onSuccess(personalDetailResp);
+                }
+                else {
+                    listener.onFailure(AppError.STATUS_ERROR_TIMEOUT,AppError.MESSAGE_ERROR_TIMEOUT);
+                }
             }
         }.execute();
     }

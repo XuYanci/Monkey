@@ -22,4 +22,10 @@ public interface AppAction {
      * @param listener
      */
     public void getPersonalDetailByAccessToken(String access_token,AppActionCallBackListener<PersonalDetailResp>listener);
+
+    /***
+     * 获取个人信息通过用户名
+     * @param username
+     */
+    public void getPersonalDetailByUserName(String username,AppActionCallBackListener<PersonalDetailResp>listener);
 }
