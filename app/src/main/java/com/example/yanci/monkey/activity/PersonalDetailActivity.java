@@ -16,10 +16,13 @@ import com.example.yanci.core.AppActionCallBackListener;
 import com.example.yanci.core.AsynImageLoader;
 import com.example.yanci.model.PersonalDetailResp;
 import com.example.yanci.monkey.R;
+import com.example.yanci.monkey.activity.dummy.DummyContent;
 
 import org.w3c.dom.Text;
 
-public class PersonalDetailActivity extends KBaseActivity {
+public class PersonalDetailActivity extends KBaseActivity implements PeronsonalDetailRepoItemFragment.OnListFragmentInteractionListener,
+        PersonalDetailFollowerItemFragment.OnListFragmentInteractionListener,
+        PersonalDetailFollingItemFragment.OnListFragmentInteractionListener {
 
     private final String TAG = "TAG_PERSONALDETAIL";
 
@@ -45,6 +48,11 @@ public class PersonalDetailActivity extends KBaseActivity {
     private TextView tv_followercount;
     private TextView tv_followerstr;
 
+    private PeronsonalDetailRepoItemFragment repoItemFragment;
+    private PersonalDetailFollingItemFragment follingItemFragment;
+    private PersonalDetailFollowerItemFragment followerItemFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,44 +67,22 @@ public class PersonalDetailActivity extends KBaseActivity {
         tv_email = (TextView)findViewById(R.id.tv_email);
         tv_blog = (TextView)findViewById(R.id.tv_blog);
         tv_address = (TextView)findViewById(R.id.tv_address);
-
         tv_repostr = (TextView)findViewById(R.id.tv_repostr);
         tv_repocount = (TextView)findViewById(R.id.tv_repocount);
-
         tv_followcount = (TextView)findViewById(R.id.tv_followcount);
         tv_followstr = (TextView)findViewById(R.id.tv_followstr);
-
         tv_followercount = (TextView)findViewById(R.id.tv_followercount);
         tv_followerstr = (TextView)findViewById(R.id.tv_followerstr);
-
         ll_repo = (LinearLayout)findViewById(R.id.ll_repo);
         ll_follow = (LinearLayout)findViewById(R.id.ll_follow);
         ll_follower = (LinearLayout)findViewById(R.id.ll_follower);
 
-
-
         // Add UI Event
-        ll_repo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        ll_repo.setOnClickListener(new SegmentClickListener());
+        ll_follow.setOnClickListener(new SegmentClickListener());
+        ll_follower.setOnClickListener(new SegmentClickListener());
 
-            }
-        });
-
-        ll_follow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        ll_follower.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
+        // Fetch user detail
         String accesstoken = this.getIntent().getStringExtra("accesstoken");
         String username = this.getIntent().getStringExtra("username");
 
@@ -106,6 +92,17 @@ public class PersonalDetailActivity extends KBaseActivity {
         else if(!username.isEmpty()) {
             this.appAction.getPersonalDetailByUserName(username,new PersonalDetailFetchListener());
         }
+
+        repoItemFragment = new PeronsonalDetailRepoItemFragment();
+        follingItemFragment = new PersonalDetailFollingItemFragment();
+        followerItemFragment = new PersonalDetailFollowerItemFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_content,repoItemFragment).commit();
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 
     class PersonalDetailFetchListener implements AppActionCallBackListener<PersonalDetailResp> {
@@ -132,13 +129,10 @@ public class PersonalDetailActivity extends KBaseActivity {
             tv_email.setText(data.getEmail());
             tv_blog.setText(data.getBlog());
             tv_address.setText(data.getLocation());
-
             tv_repocount.setText(data.getPublic_repos());
             tv_repostr.setText("Repositories");
-
             tv_followcount.setText(data.getFollowing());
             tv_followstr.setText("Following");
-
             tv_followercount.setText(data.getFollowers());
             tv_followerstr.setText("Follower");
         }
@@ -146,6 +140,25 @@ public class PersonalDetailActivity extends KBaseActivity {
         @Override
         public void onFailure(String errorEvent, String message) {
 
+        }
+    }
+
+    class SegmentClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.ll_repo:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_content,repoItemFragment,"0").commit();
+
+                    break;
+                case R.id.ll_follow:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_content,follingItemFragment,"1").commit();
+
+                    break;
+                case R.id.ll_follower:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_content,followerItemFragment,"2").commit();
+                    break;
+            }
         }
     }
 }
